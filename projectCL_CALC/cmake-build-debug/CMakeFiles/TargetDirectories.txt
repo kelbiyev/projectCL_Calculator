@@ -1,3 +1,0 @@
-/home/stud-04/exampleGit/projectCL_Calculator/projectCL_Calculator/projectCL_CALC/cmake-build-debug/CMakeFiles/projectCL_CALC.dir
-/home/stud-04/exampleGit/projectCL_Calculator/projectCL_Calculator/projectCL_CALC/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/stud-04/exampleGit/projectCL_Calculator/projectCL_Calculator/projectCL_CALC/cmake-build-debug/CMakeFiles/rebuild_cache.dir

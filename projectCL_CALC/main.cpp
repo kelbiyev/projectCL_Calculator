@@ -2,18 +2,18 @@
 #include <sstream>
 #include <stack>
 #include <cctype>
-#include <string>
+#include <cmath>
+#include <stdexcept>
 
-using namespace std;
-
-// Проверка приоритета операций
+// Function to check operator precedence
 int precedence(char op) {
-    if (op == '+' || op == '-') return 1;
-    if (op == '*' || op == '/') return 2;
+    if (op == '^') return 3;  // Power has the highest precedence
+    if (op == '*' || op == '/') return 2;  // Multiplication and division
+    if (op == '+' || op == '-') return 1;  // Addition and subtraction
     return 0;
 }
 
-// Выполнение арифметической операции
+// Function to perform arithmetic operations
 double applyOperation(double a, double b, char op) {
     switch (op) {
         case '+': return a + b;
@@ -21,37 +21,40 @@ double applyOperation(double a, double b, char op) {
         case '*': return a * b;
         case '/':
             if (b == 0) {
-                throw runtime_error("Деление на ноль!");
+                throw std::runtime_error("Division by zero!");
             }
             return a / b;
+        case '^':
+            if (b == 0) return 1; // a^0 = 1 for all a
+            return std::pow(a, b);
+        default: return 0;
     }
-    return 0;
 }
 
-// Вычисление выражения
-double evaluate(const string& expression) {
-    stack<double> values; // Стек для чисел
-    stack<char> operators; // Стек для операторов
+// Function to evaluate an expression
+double evaluate(const std::string& expression) {
+    std::stack<double> values;  // Stack for numbers
+    std::stack<char> operators;  // Stack for operators
 
     for (size_t i = 0; i < expression.length(); i++) {
-        // Пропускаем пробелы
-        if (isspace(expression[i])) {
+        // Skip whitespace
+        if (std::isspace(expression[i])) {
             continue;
         }
 
-        // Если текущий символ — число
-        if (isdigit(expression[i]) || expression[i] == '.') {
-            stringstream ss;
-            while (i < expression.length() && (isdigit(expression[i]) || expression[i] == '.')) {
+        // If the character is a number or decimal point
+        if (std::isdigit(expression[i]) || expression[i] == '.') {
+            std::stringstream ss;
+            while (i < expression.length() && (std::isdigit(expression[i]) || expression[i] == '.')) {
                 ss << expression[i++];
             }
-            i--; // Вернуться назад на один символ
+            i--; // Move one character back
             double val;
             ss >> val;
             values.push(val);
         }
-        // Если текущий символ — оператор
-        else if (expression[i] == '+' || expression[i] == '*' || expression[i] == '/') {
+        // If the character is an operator
+        else if (expression[i] == '+'|| expression[i] == '-' ||expression[i] == '*' || expression[i] == '/' || expression[i] == '^') {
             while (!operators.empty() && precedence(operators.top()) >= precedence(expression[i])) {
                 double b = values.top(); values.pop();
                 double a = values.top(); values.pop();
@@ -60,11 +63,11 @@ double evaluate(const string& expression) {
             }
             operators.push(expression[i]);
         } else {
-            throw runtime_error("Неверный символ в выражении!");
+            throw std::runtime_error("Invalid character in expression!");
         }
     }
 
-    // Обработка оставшихся операторов
+    // Process remaining operators
     while (!operators.empty()) {
         double b = values.top(); values.pop();
         double a = values.top(); values.pop();
@@ -76,24 +79,24 @@ double evaluate(const string& expression) {
 }
 
 int main() {
-    cout << "Калькулятор. Вводите выражение по символу (например, 25*3/5).\n";
-    cout << "Для выхода введите 'q'.\n";
+    std::cout << "Calculator. Enter an expression (e.g., 25*3/5).\n";
+    std::cout << "Type 'q' to exit.\n";
 
     while (true) {
         try {
-            string input;
-            cout << "Введите выражение: ";
-            getline(cin, input);
+            std::string input;
+            std::cout << "Enter expression: ";
+            std::getline(std::cin, input);
 
             if (input == "q") {
-                cout << "Выход из программы.\n";
+                std::cout << "Exiting program.\n";
                 break;
             }
 
             double result = evaluate(input);
-            cout << "Результат: " << result << endl;
-        } catch (const exception& e) {
-            cerr << "Ошибка: " << e.what() << ". Попробуйте снова." << endl;
+            std::cout << "Result: " << result << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << ". Try again.\n";
         }
     }
 
